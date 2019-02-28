@@ -22,9 +22,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchIcon" translatesAutoresizingMaskIntoConstraints="NO" id="aSD-us-O7a">
-                                <rect key="frame" x="147" y="388" width="120" height="120"/>
+                                <rect key="frame" x="157" y="398" width="100" height="100"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="120" id="Y1C-Kj-ueJ"/>
+                                    <constraint firstAttribute="width" constant="100" id="Y1C-Kj-ueJ"/>
                                     <constraint firstAttribute="width" secondItem="aSD-us-O7a" secondAttribute="height" multiplier="1:1" id="pnD-BN-0ns"/>
                                 </constraints>
                             </imageView>
@@ -48,6 +48,6 @@
     </scenes>
     <resources>
         <image name="LaunchGradientBG" width="1125" height="2436"/>
-        <image name="LaunchIcon" width="120" height="120"/>
+        <image name="LaunchIcon" width="100" height="100"/>
     </resources>
 </document>
