@@ -15,6 +15,7 @@
 		63911FB722282E490014B1B3 /* iTunes_ViewerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63911FB622282E490014B1B3 /* iTunes_ViewerUITests.swift */; };
 		63911FC7222834380014B1B3 /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63911FC6222834380014B1B3 /* LaunchScreenViewController.swift */; };
 		63911FC9222834420014B1B3 /* MainScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63911FC8222834420014B1B3 /* MainScreenViewController.swift */; };
+		63911FCB222856290014B1B3 /* ScaleTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63911FCA222856290014B1B3 /* ScaleTransition.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		63911FB822282E490014B1B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		63911FC6222834380014B1B3 /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
 		63911FC8222834420014B1B3 /* MainScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenViewController.swift; sourceTree = "<group>"; };
+		63911FCA222856290014B1B3 /* ScaleTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTransition.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 				63911F9622282E460014B1B3 /* AppDelegate.swift */,
 				63911FC6222834380014B1B3 /* LaunchScreenViewController.swift */,
 				63911FC8222834420014B1B3 /* MainScreenViewController.swift */,
+				63911FCA222856290014B1B3 /* ScaleTransition.swift */,
 				63911F9A22282E460014B1B3 /* Main.storyboard */,
 				63911F9D22282E490014B1B3 /* Assets.xcassets */,
 				63911F9F22282E490014B1B3 /* LaunchScreen.storyboard */,
@@ -262,6 +265,7 @@
 				63911FC9222834420014B1B3 /* MainScreenViewController.swift in Sources */,
 				63911FC7222834380014B1B3 /* LaunchScreenViewController.swift in Sources */,
 				63911F9722282E460014B1B3 /* AppDelegate.swift in Sources */,
+				63911FCB222856290014B1B3 /* ScaleTransition.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

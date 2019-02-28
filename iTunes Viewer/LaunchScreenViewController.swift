@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LaunchScreenViewController: UIViewController {
+class LaunchScreenViewController: UIViewController, UIViewControllerTransitioningDelegate {
     
     // BG Image
     var bgImage: UIImage?
@@ -17,6 +17,9 @@ class LaunchScreenViewController: UIViewController {
     // Launch Icon Image
     var launchIconImage: UIImage?
     var launchIconImageView: UIImageView?
+    
+    // Transition
+    let scaleTransition = ScaleTransition()
 
     // View Did Load
     override func viewDidLoad() {
@@ -47,13 +50,48 @@ class LaunchScreenViewController: UIViewController {
     
     // View Did Appear
     override func viewDidAppear(_ animated: Bool) {
-        
+        // Add delay before beginning animation to preserve visual continuity
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600), execute: {
+            // Scale up launch icon
+            UIView.animate(
+                withDuration: 0.15,
+                delay: 0.0,
+                options: .curveEaseInOut,
+                animations: {
+                    self.launchIconImageView?.transform = CGAffineTransform.identity.scaledBy(x: 1.75, y: 1.75)
+                }, completion: { finished in
+                    // Scale down launch icon
+                    UIView.animate(
+                        withDuration: 0.15,
+                        delay: 0.0,
+                        options: .curveEaseInOut,
+                        animations: {
+                            self.launchIconImageView?.transform = CGAffineTransform.identity.scaledBy(x: 0.01, y: 0.01)
+                        }, completion: { finished in
+                            // Begin transition
+                            self.transitionToMainView()
+                        }
+                    )
+                }
+            )
+        })
+    }
+    
+    // Transition to main view.
+    func transitionToMainView() {
+        let mainScreenViewController = storyboard!.instantiateViewController(withIdentifier: "MainScreenViewController") as! MainScreenViewController
+        mainScreenViewController.transitioningDelegate = self
+        self.present(mainScreenViewController, animated: true, completion: nil)
+    }
+    
+    /// Return scale transition when presenting view controller
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return scaleTransition
     }
     
     // Set status bar style.
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    
 
 }
