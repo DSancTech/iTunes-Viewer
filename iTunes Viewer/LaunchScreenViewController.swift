@@ -26,7 +26,7 @@ class LaunchScreenViewController: UIViewController, UIViewControllerTransitionin
         super.viewDidLoad()
         
         // Set background color:
-        self.view.backgroundColor = UIColor.init(red:0.92, green:0.59, blue:0.16, alpha:1.0)
+        self.view.backgroundColor = UIColor(red: 0.92, green: 0.59, blue: 0.16, alpha: 1.0)
         
         // Set background image:
         bgImage = UIImage.init(named: "LaunchGradientBG")
