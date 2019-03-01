@@ -12,11 +12,14 @@ class LaunchScreenViewController: UIViewController, UIViewControllerTransitionin
     
     // BG Image
     var bgImage: UIImage?
-    var bgImageView: UIImageView?
     
     // Launch Icon Image
     var launchIconImage: UIImage?
-    var launchIconImageView: UIImageView?
+    var launchIconImageView = UIImageView()
+    var launchIconImageViewXConstraint = NSLayoutConstraint()
+    var launchIconImageViewYConstraint = NSLayoutConstraint()
+    var launchIconImageViewWidthConstraint = NSLayoutConstraint()
+    var launchIconImageViewHeightConstraint = NSLayoutConstraint()
     
     // Transition
     let scaleTransition = ScaleTransition()
@@ -25,26 +28,29 @@ class LaunchScreenViewController: UIViewController, UIViewControllerTransitionin
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Set background color:
-        self.view.backgroundColor = UIColor(red: 0.92, green: 0.59, blue: 0.16, alpha: 1.0)
-        
         // Set background image:
-        bgImage = UIImage.init(named: "LaunchGradientBG")
-        bgImageView = UIImageView(frame: self.view.bounds)
-        bgImageView?.contentMode = .scaleToFill
-        bgImageView?.center = self.view.center
-        bgImageView?.image = bgImage
-        self.view.addSubview(bgImageView ?? UIView.init(frame: self.view.bounds))
-        self.view.sendSubviewToBack(bgImageView ?? UIView.init(frame: self.view.bounds))
+        bgImage = UIImage(named: "LaunchGradientBG")
+        UIGraphicsBeginImageContext(self.view.frame.size)
+        bgImage?.draw(in: self.view.bounds)
+        let patternImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        self.view.backgroundColor = UIColor(patternImage: patternImage)
         
         // Set launch icon image:
         launchIconImage = UIImage.init(named: "LaunchIcon")
-        launchIconImageView = UIImageView(frame: CGRect(x: 0.0, y: 0.0, width: 100.0, height: 100.0))
-        launchIconImageView?.contentMode = .scaleAspectFit
-        launchIconImageView?.center = self.view.center
-        launchIconImageView?.image = launchIconImage
-        self.view.addSubview(launchIconImageView ?? UIView.init(frame: self.view.bounds))
-        self.view.bringSubviewToFront(launchIconImageView ?? UIView.init(frame: self.view.bounds))
+        launchIconImageView.contentMode = .scaleAspectFit
+        launchIconImageView.image = launchIconImage
+        launchIconImageView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(launchIconImageView)
+        self.view.bringSubviewToFront(launchIconImageView)
+        launchIconImageViewWidthConstraint = launchIconImageView.widthAnchor.constraint(equalToConstant: 100.0)
+        launchIconImageViewWidthConstraint.isActive = true
+        launchIconImageViewHeightConstraint = launchIconImageView.heightAnchor.constraint(equalToConstant: 100.0)
+        launchIconImageViewHeightConstraint.isActive = true
+        launchIconImageViewXConstraint = launchIconImageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+        launchIconImageViewXConstraint.isActive = true
+        launchIconImageViewYConstraint = launchIconImageView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+        launchIconImageViewYConstraint.isActive = true
         
     }
     
@@ -58,7 +64,7 @@ class LaunchScreenViewController: UIViewController, UIViewControllerTransitionin
                 delay: 0.0,
                 options: .curveEaseInOut,
                 animations: {
-                    self.launchIconImageView?.transform = CGAffineTransform.identity.scaledBy(x: 1.75, y: 1.75)
+                    self.launchIconImageView.transform = CGAffineTransform.identity.scaledBy(x: 1.75, y: 1.75)
                 }, completion: { finished in
                     // Scale down launch icon
                     UIView.animate(
@@ -66,7 +72,7 @@ class LaunchScreenViewController: UIViewController, UIViewControllerTransitionin
                         delay: 0.0,
                         options: .curveEaseInOut,
                         animations: {
-                            self.launchIconImageView?.transform = CGAffineTransform.identity.scaledBy(x: 0.01, y: 0.01)
+                            self.launchIconImageView.transform = CGAffineTransform.identity.scaledBy(x: 0.01, y: 0.01)
                         }, completion: { finished in
                             // Begin transition
                             self.transitionToMainView()

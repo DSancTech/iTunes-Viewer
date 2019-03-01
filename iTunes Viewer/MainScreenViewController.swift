@@ -12,11 +12,21 @@ class MainScreenViewController: UIViewController {
     
     // Top Container View
     var topContainerView = UIView()
-    var topContainerViewLeftConstraintConstant = CGFloat()
-    var topContainerViewTopConstraintConstant = CGFloat()
-    var topContainerViewHeightConstraintConstant = CGFloat()
+    var topContainerViewBGImage: UIImage?
     var topContainerViewHeightConstraint = NSLayoutConstraint()
-    var topContainerViewWidthConstraintConstant = CGFloat()
+    var topContainerViewWidthConstraint = NSLayoutConstraint()
+    var topContainerViewLeftConstraint = NSLayoutConstraint()
+    var topContainerViewTopConstraint = NSLayoutConstraint()
+    
+    // Title Label
+    var titleLabel = UILabel()
+    var titleLabelLeftConstraint = NSLayoutConstraint()
+    var titleLabelRightConstraint = NSLayoutConstraint()
+    var titleLabelBottomConstraint = NSLayoutConstraint()
+    
+    // Media Type Container View
+    
+    // Feed Type Container View
     
     // View variables
     var topSafeArea = CGFloat()
@@ -46,33 +56,58 @@ class MainScreenViewController: UIViewController {
         self.view.backgroundColor = UIColor(red: 0.93, green: 0.94, blue: 0.96, alpha: 1.0)
         
         // Setup top container view:
-        topContainerView.backgroundColor = UIColor(red: 0.92, green: 0.59, blue: 0.16, alpha: 1.0)
+        topContainerView.backgroundColor = UIColor(red: 0.92, green: 0.55, blue: 0.16, alpha: 1.0)
         topContainerView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(topContainerView)
         self.view.bringSubviewToFront(topContainerView)
-        topContainerViewLeftConstraintConstant = CGFloat(0.0)
-        topContainerViewTopConstraintConstant = CGFloat(0.0)
-        topContainerViewHeightConstraintConstant = topSafeArea + 200.0
-        topContainerViewWidthConstraintConstant = viewWidth
-        topContainerViewHeightConstraint = topContainerView.heightAnchor.constraint(equalToConstant: topContainerViewHeightConstraintConstant)
+        if (UIDevice.current.orientation.isPortrait) {
+            topContainerViewHeightConstraint = topContainerView.heightAnchor.constraint(equalToConstant: topSafeArea + 220.0)
+            topContainerViewWidthConstraint = topContainerView.widthAnchor.constraint(equalToConstant: viewWidth)
+        }
+        else if (UIDevice.current.orientation.isLandscape) {
+            topContainerViewHeightConstraint = topContainerView.heightAnchor.constraint(equalToConstant: viewWidth)
+            topContainerViewWidthConstraint = topContainerView.widthAnchor.constraint(equalToConstant: topSafeArea + 200.0)
+        }
+        topContainerViewLeftConstraint = topContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor)
+        topContainerViewTopConstraint = topContainerView.topAnchor.constraint(equalTo: self.view.topAnchor)
+        topContainerViewWidthConstraint.isActive = true
         topContainerViewHeightConstraint.isActive = true
-        topContainerView.widthAnchor.constraint(equalToConstant: topContainerViewWidthConstraintConstant).isActive = true
         
+    }
+    
+    // View did layout subviews
+    override func viewDidLayoutSubviews() {
+        // Set top container view bg image:
+        topContainerViewBGImage = UIImage(named: "LaunchGradientBG")
+        UIGraphicsBeginImageContext(self.view.frame.size)
+        topContainerViewBGImage?.draw(in: self.topContainerView.bounds)
+        let patternImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        self.topContainerView.backgroundColor = UIColor(patternImage: patternImage)
     }
     
     // Detect orientation changes.
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        // On landscape orientation:
-        if UIDevice.current.orientation.isLandscape {
-            topContainerViewHeightConstraint.constant = viewWidth
-        }
         // On portrait orientation:
-        else if (UIDevice.current.orientation.isPortrait) {
-            topContainerViewHeightConstraint.constant = topSafeArea + 200.0
+        if (UIDevice.current.orientation.isPortrait) {
+            topContainerViewHeightConstraint.constant = topSafeArea + 220.0
+            topContainerViewWidthConstraint.constant = viewWidth
         }
-        self.view.layoutIfNeeded()
+        // On landscape orientation:
+        else if (UIDevice.current.orientation.isLandscape) {
+            topContainerViewHeightConstraint.constant = viewWidth
+            topContainerViewWidthConstraint.constant = topSafeArea + 200.0
+        }
+        // Animate rotation change:
+        UIView.animate(
+            withDuration: 0.15,
+            delay: 0.0,
+            options: .curveEaseInOut,
+            animations: {
+                self.view.layoutIfNeeded()
+        }, completion: nil
+        )
     }
-
     
     // Set status bar style.
     override var preferredStatusBarStyle: UIStatusBarStyle {
