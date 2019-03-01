@@ -21,12 +21,21 @@ class MainScreenViewController: UIViewController {
     // Title Label
     var titleLabel = UILabel()
     var titleLabelLeftConstraint = NSLayoutConstraint()
-    var titleLabelRightConstraint = NSLayoutConstraint()
     var titleLabelBottomConstraint = NSLayoutConstraint()
     
     // Media Type Container View
+    var mediaTypeContainerView = UIView()
+    var mediaTypeContainerViewHeight = NSLayoutConstraint()
+    var mediaTypeContainerViewLeftConstraint = NSLayoutConstraint()
+    var mediaTypeContainerViewRightConstraint = NSLayoutConstraint()
+    var mediaTypeContainerViewYConstraint = NSLayoutConstraint()
     
     // Feed Type Container View
+    var feedTypeContainerView = UIView()
+    var feedTypeContainerViewHeight = NSLayoutConstraint()
+    var feedTypeContainerViewLeftConstraint = NSLayoutConstraint()
+    var feedTypeContainerViewRightConstraint = NSLayoutConstraint()
+    var feedTypeContainerViewTopConstraint = NSLayoutConstraint()
     
     // View variables
     var topSafeArea = CGFloat()
@@ -55,23 +64,82 @@ class MainScreenViewController: UIViewController {
         // Set background color:
         self.view.backgroundColor = UIColor(red: 0.93, green: 0.94, blue: 0.96, alpha: 1.0)
         
-        // Setup top container view:
+        // Set up top container view:
         topContainerView.backgroundColor = UIColor(red: 0.92, green: 0.55, blue: 0.16, alpha: 1.0)
         topContainerView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(topContainerView)
         self.view.bringSubviewToFront(topContainerView)
         if (UIDevice.current.orientation.isPortrait) {
-            topContainerViewHeightConstraint = topContainerView.heightAnchor.constraint(equalToConstant: topSafeArea + 220.0)
+            topContainerViewHeightConstraint = topContainerView.heightAnchor.constraint(equalToConstant: topSafeArea + 208.0)
             topContainerViewWidthConstraint = topContainerView.widthAnchor.constraint(equalToConstant: viewWidth)
         }
         else if (UIDevice.current.orientation.isLandscape) {
             topContainerViewHeightConstraint = topContainerView.heightAnchor.constraint(equalToConstant: viewWidth)
-            topContainerViewWidthConstraint = topContainerView.widthAnchor.constraint(equalToConstant: topSafeArea + 200.0)
+            topContainerViewWidthConstraint = topContainerView.widthAnchor.constraint(equalToConstant: topSafeArea + 224.0)
         }
         topContainerViewLeftConstraint = topContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor)
         topContainerViewTopConstraint = topContainerView.topAnchor.constraint(equalTo: self.view.topAnchor)
         topContainerViewWidthConstraint.isActive = true
         topContainerViewHeightConstraint.isActive = true
+        
+        // Set up media type container view:
+        mediaTypeContainerView.backgroundColor = UIColor.white.withAlphaComponent(0.15)
+        mediaTypeContainerView.layer.cornerRadius = 15.0
+        mediaTypeContainerView.clipsToBounds = true
+        mediaTypeContainerView.translatesAutoresizingMaskIntoConstraints = false
+        self.topContainerView.addSubview(mediaTypeContainerView)
+        if (UIDevice.current.orientation.isPortrait) {
+            mediaTypeContainerViewLeftConstraint = mediaTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 24.0)
+            mediaTypeContainerViewRightConstraint = mediaTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -24.0)
+            mediaTypeContainerViewYConstraint = mediaTypeContainerView.centerYAnchor.constraint(equalTo: topContainerView.centerYAnchor, constant: -((topSafeArea / 2.0) - 37.0))
+        }
+        else if (UIDevice.current.orientation.isLandscape) {
+            mediaTypeContainerViewLeftConstraint = mediaTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: topSafeArea + 8.0)
+            mediaTypeContainerViewRightConstraint = mediaTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -(topSafeArea + 8.0))
+            mediaTypeContainerViewYConstraint = mediaTypeContainerView.centerYAnchor.constraint(equalTo: topContainerView.centerYAnchor, constant: 0.0)
+        }
+        mediaTypeContainerViewHeight = mediaTypeContainerView.heightAnchor.constraint(equalToConstant: 50.0)
+        mediaTypeContainerViewLeftConstraint.isActive = true
+        mediaTypeContainerViewRightConstraint.isActive = true
+        mediaTypeContainerViewYConstraint.isActive = true
+        mediaTypeContainerViewHeight.isActive = true
+        
+        // Set up title label:
+        titleLabel.text = "iTunes Viewer"
+        titleLabel.font = UIFont.systemFont(ofSize: 24.0, weight: .black)
+        titleLabel.textColor = UIColor.white
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        self.topContainerView.addSubview(titleLabel)
+        if (UIDevice.current.orientation.isPortrait) {
+            titleLabelLeftConstraint = titleLabel.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 24.0)
+        }
+        else if (UIDevice.current.orientation.isLandscape) {
+            titleLabelLeftConstraint = titleLabel.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: topSafeArea + 8.0)
+        }
+        titleLabelBottomConstraint = titleLabel.bottomAnchor.constraint(equalTo: mediaTypeContainerView.topAnchor, constant: -24.0)
+        titleLabelLeftConstraint.isActive = true
+        titleLabelBottomConstraint.isActive = true
+        
+        // Set up feed type container view:
+        feedTypeContainerView.backgroundColor = UIColor.white.withAlphaComponent(0.15)
+        feedTypeContainerView.layer.cornerRadius = 15.0
+        feedTypeContainerView.clipsToBounds = true
+        feedTypeContainerView.translatesAutoresizingMaskIntoConstraints = false
+        self.topContainerView.addSubview(feedTypeContainerView)
+        if (UIDevice.current.orientation.isPortrait) {
+            feedTypeContainerViewLeftConstraint = feedTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 24.0)
+            feedTypeContainerViewRightConstraint = feedTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -24.0)
+        }
+        else if (UIDevice.current.orientation.isLandscape) {
+            feedTypeContainerViewLeftConstraint = feedTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: topSafeArea + 8.0)
+            feedTypeContainerViewRightConstraint = feedTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -(topSafeArea + 8.0))
+        }
+        feedTypeContainerViewHeight = feedTypeContainerView.heightAnchor.constraint(equalToConstant: 50.0)
+        feedTypeContainerViewTopConstraint = feedTypeContainerView.topAnchor.constraint(equalTo: mediaTypeContainerView.bottomAnchor, constant: 8.0)
+        feedTypeContainerViewLeftConstraint.isActive = true
+        feedTypeContainerViewRightConstraint.isActive = true
+        feedTypeContainerViewTopConstraint.isActive = true
+        feedTypeContainerViewHeight.isActive = true
         
     }
     
@@ -90,13 +158,13 @@ class MainScreenViewController: UIViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         // On portrait orientation:
         if (UIDevice.current.orientation.isPortrait) {
-            topContainerViewHeightConstraint.constant = topSafeArea + 220.0
+            topContainerViewHeightConstraint.constant = topSafeArea + 208.0
             topContainerViewWidthConstraint.constant = viewWidth
         }
         // On landscape orientation:
         else if (UIDevice.current.orientation.isLandscape) {
             topContainerViewHeightConstraint.constant = viewWidth
-            topContainerViewWidthConstraint.constant = topSafeArea + 200.0
+            topContainerViewWidthConstraint.constant = topSafeArea + 224.0
         }
         // Animate rotation change:
         UIView.animate(
