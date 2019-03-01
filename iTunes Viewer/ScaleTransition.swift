@@ -11,9 +11,9 @@ import UIKit
 class ScaleTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
     // Transition Variables
-    let transitionDuration = 1.3
+    let transitionDuration = 0.8
     let transitionDelay = 0.0
-    let springDamping = CGFloat(0.6)
+    let springDamping = CGFloat(0.7)
     let springVelocity = CGFloat(0.0)
     
     // Set the transition duration
