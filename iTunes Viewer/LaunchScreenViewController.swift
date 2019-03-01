@@ -58,6 +58,8 @@ class LaunchScreenViewController: UIViewController, UIViewControllerTransitionin
     override func viewDidAppear(_ animated: Bool) {
         // Add delay before beginning animation to preserve visual continuity
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600), execute: {
+            let value = UIInterfaceOrientation.portrait.rawValue
+            UIDevice.current.setValue(value, forKey: "orientation")
             // Scale up launch icon
             UIView.animate(
                 withDuration: 0.15,
@@ -72,7 +74,7 @@ class LaunchScreenViewController: UIViewController, UIViewControllerTransitionin
                         delay: 0.0,
                         options: .curveEaseInOut,
                         animations: {
-                            self.launchIconImageView.transform = CGAffineTransform.identity.scaledBy(x: 0.01, y: 0.01)
+                            self.launchIconImageView.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
                         }, completion: { finished in
                             // Begin transition
                             self.transitionToMainView()

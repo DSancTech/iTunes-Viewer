@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITableViewDelegate, UITableViewDataSource {
     
     // Top Container View
     var topContainerView = UIView()
@@ -102,6 +102,13 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
     var bottomContainerViewBottomConstraint = NSLayoutConstraint()
     var bottomContainerViewTopConstraint = NSLayoutConstraint()
     
+    // Main Table View
+    var mainTableView = UITableView()
+    var mainTableViewLeftConstraint = NSLayoutConstraint()
+    var mainTableViewRightConstraint = NSLayoutConstraint()
+    var mainTableViewBottomConstraint = NSLayoutConstraint()
+    var mainTableViewTopConstraint = NSLayoutConstraint()
+    
     // Pop Up Darken View
     var popUpDarkenView = UIView()
     
@@ -133,12 +140,17 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
     var viewHeight = CGFloat()
     var viewWidth = CGFloat()
     
+    // Loader Indicator View
+    var loaderView = UIActivityIndicatorView()
+    var loaderViewXConstraint = NSLayoutConstraint()
+    var loaderViewYConstraint = NSLayoutConstraint()
+    
     // Selected Picker
     var selectedPicker = 0
     
     // Arrays
     var selectedMediaTypeArray: [Int] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    var selectedMediaTypeTextArray: [String] = ["Apple Music", "iTunes Music", "iOS Apps", "Mac Apps", "Audiobooks", "Books", "TV Shows", "Movies", "iTunes U", "Podcasts", "Music Videos"]
+    var selectedMediaTypeTextArray: [String] = ["Apple Music", "iTunes Music", "iOS Apps", "MacOS Apps", "Audiobooks", "Books", "TV Shows", "Movies", "iTunes U", "Podcasts", "Music Videos"]
     var selectedMediaType = 0
     var selectedFeedTypeArray: [[Int]] = [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16], [17, 18, 19, 20], [21], [22, 23], [24, 25], [26], [27], [28], [29]]
     var selectedFeedTypeTextArray: [String] = ["Coming Soon", "Hot Tracks", "New Releases", "Top Albums", "Top Songs", "Hot Tracks", "New Music", "Recent Releases", "Top Albums", "Top Songs", "New Apps We Love", "New Games We Love", "Top Free", "Top Free iPad", "Top Grossing", "Top Grossing Paid", "Top Paid", "Top Free Mac Apps", "Top Grossing Mac Apps", "Top Mac Apps", "Top Paid Mac Apps", "Top Audiobooks", "Top Free", "Top Paid", "Top TV Episodes", "Top TV Seasons", "Top Movies", "Top iTunes U Courses", "Top Podcasts", "Top Music Videos"]
@@ -183,8 +195,14 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
             topContainerViewWidthConstraint = topContainerView.widthAnchor.constraint(equalToConstant: viewWidth)
         }
         else if (UIDevice.current.orientation.isLandscape) {
-            topContainerViewHeightConstraint = topContainerView.heightAnchor.constraint(equalToConstant: viewWidth)
-            topContainerViewWidthConstraint = topContainerView.widthAnchor.constraint(equalToConstant: topSafeArea + 224.0)
+            if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+                topContainerViewHeightConstraint = topContainerView.heightAnchor.constraint(equalToConstant: viewWidth)
+                topContainerViewWidthConstraint = topContainerView.widthAnchor.constraint(equalToConstant: topSafeArea + 280.0)
+            }
+            else if UIDevice.current.orientation == UIDeviceOrientation.landscapeRight {
+                topContainerViewHeightConstraint = topContainerView.heightAnchor.constraint(equalToConstant: viewWidth)
+                topContainerViewWidthConstraint = topContainerView.widthAnchor.constraint(equalToConstant: 280.0)
+            }
         }
         else {
             topContainerViewHeightConstraint = topContainerView.heightAnchor.constraint(equalToConstant: topSafeArea + 208.0)
@@ -209,9 +227,16 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
             mediaTypeContainerViewYConstraint = mediaTypeContainerView.centerYAnchor.constraint(equalTo: topContainerView.centerYAnchor, constant: -((topSafeArea / 2.0) - 37.0))
         }
         else if (UIDevice.current.orientation.isLandscape) {
-            mediaTypeContainerViewLeftConstraint = mediaTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: topSafeArea + 24.0)
-            mediaTypeContainerViewRightConstraint = mediaTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -24.0)
-            mediaTypeContainerViewYConstraint = mediaTypeContainerView.centerYAnchor.constraint(equalTo: topContainerView.centerYAnchor, constant: 0.0)
+            if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+                mediaTypeContainerViewLeftConstraint = mediaTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: topSafeArea + 24.0)
+                mediaTypeContainerViewRightConstraint = mediaTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -24.0)
+                mediaTypeContainerViewYConstraint = mediaTypeContainerView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 0.0)
+            }
+            else if UIDevice.current.orientation == UIDeviceOrientation.landscapeRight {
+                mediaTypeContainerViewLeftConstraint = mediaTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 24.0)
+                mediaTypeContainerViewRightConstraint = mediaTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -24.0)
+                mediaTypeContainerViewYConstraint = mediaTypeContainerView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 0.0)
+            }
         }
         else {
             mediaTypeContainerViewLeftConstraint = mediaTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 24.0)
@@ -292,7 +317,12 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
             titleLabelLeftConstraint = titleLabel.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 24.0)
         }
         else if (UIDevice.current.orientation.isLandscape) {
-            titleLabelLeftConstraint = titleLabel.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: topSafeArea + 24.0)
+            if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+                titleLabelLeftConstraint = titleLabel.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: topSafeArea + 24.0)
+            }
+            else if UIDevice.current.orientation == UIDeviceOrientation.landscapeRight {
+                titleLabelLeftConstraint = titleLabel.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 24.0)
+            }
         }
         else {
             titleLabelLeftConstraint = titleLabel.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 24.0)
@@ -312,8 +342,14 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
             feedTypeContainerViewRightConstraint = feedTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -24.0)
         }
         else if (UIDevice.current.orientation.isLandscape) {
-            feedTypeContainerViewLeftConstraint = feedTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: topSafeArea + 24.0)
-            feedTypeContainerViewRightConstraint = feedTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -24.0)
+            if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+                feedTypeContainerViewLeftConstraint = feedTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: topSafeArea + 24.0)
+                feedTypeContainerViewRightConstraint = feedTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -24.0)
+            }
+            else if UIDevice.current.orientation == UIDeviceOrientation.landscapeRight {
+                feedTypeContainerViewLeftConstraint = feedTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 24.0)
+                feedTypeContainerViewRightConstraint = feedTypeContainerView.trailingAnchor.constraint(equalTo: topContainerView.trailingAnchor, constant: -24.0)
+            }
         }
         else {
             feedTypeContainerViewLeftConstraint = feedTypeContainerView.leadingAnchor.constraint(equalTo: topContainerView.leadingAnchor, constant: 24.0)
@@ -390,18 +426,29 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
         self.view.addSubview(bottomContainerView)
         self.view.sendSubviewToBack(bottomContainerView)
         if (UIDevice.current.orientation.isPortrait) {
-            bottomContainerViewLeftConstraint = bottomContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 24.0)
-            bottomContainerViewRightConstraint = bottomContainerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -24.0)
-            bottomContainerViewTopConstraint = bottomContainerView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: -(topSafeArea + 208.0))
+            bottomContainerViewLeftConstraint = bottomContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0.0)
+            bottomContainerViewRightConstraint = bottomContainerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0.0)
+            bottomContainerViewTopConstraint = bottomContainerView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: (topSafeArea + 208.0))
             bottomContainerViewBottomConstraint = bottomContainerView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0.0)
         }
         else if (UIDevice.current.orientation.isLandscape) {
-            
+            if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+                bottomContainerViewLeftConstraint = bottomContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: topSafeArea + 280.0)
+                bottomContainerViewRightConstraint = bottomContainerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: bottomSafeArea)
+                bottomContainerViewTopConstraint = bottomContainerView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 0.0)
+                bottomContainerViewBottomConstraint = bottomContainerView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0.0)
+            }
+            else if UIDevice.current.orientation == UIDeviceOrientation.landscapeRight {
+                bottomContainerViewLeftConstraint = bottomContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 280.0)
+                bottomContainerViewRightConstraint = bottomContainerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: bottomSafeArea)
+                bottomContainerViewTopConstraint = bottomContainerView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 0.0)
+                bottomContainerViewBottomConstraint = bottomContainerView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0.0)
+            }
         }
         else {
-            bottomContainerViewLeftConstraint = bottomContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 24.0)
-            bottomContainerViewRightConstraint = bottomContainerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -24.0)
-            bottomContainerViewTopConstraint = bottomContainerView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: -(topSafeArea + 208.0))
+            bottomContainerViewLeftConstraint = bottomContainerView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0.0)
+            bottomContainerViewRightConstraint = bottomContainerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0.0)
+            bottomContainerViewTopConstraint = bottomContainerView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: (topSafeArea + 208.0))
             bottomContainerViewBottomConstraint = bottomContainerView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0.0)
         }
         bottomContainerViewLeftConstraint.isActive = true
@@ -471,11 +518,70 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
         pickerView.frame.size.height = (viewWidth - 48.0) - 60.0
         self.pickerContainerView.addSubview(pickerView)
         
+        // Set up main table view:
+        mainTableView.translatesAutoresizingMaskIntoConstraints = false
+        self.bottomContainerView.addSubview(mainTableView)
+        if (UIDevice.current.orientation.isPortrait) {
+            mainTableViewLeftConstraint = mainTableView.leadingAnchor.constraint(equalTo: self.bottomContainerView.leadingAnchor, constant: 0.0)
+            mainTableViewRightConstraint = mainTableView.trailingAnchor.constraint(equalTo: self.bottomContainerView.trailingAnchor, constant: 0.0)
+            mainTableViewBottomConstraint = mainTableView.bottomAnchor.constraint(equalTo: self.bottomContainerView.bottomAnchor, constant: 0.0)
+            mainTableViewTopConstraint = mainTableView.topAnchor.constraint(equalTo: self.bottomContainerView.topAnchor, constant: (0.0))
+        }
+        else if (UIDevice.current.orientation.isLandscape) {
+            if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+                mainTableViewLeftConstraint = mainTableView.leadingAnchor.constraint(equalTo: self.bottomContainerView.leadingAnchor, constant: 0.0)
+                mainTableViewRightConstraint = mainTableView.trailingAnchor.constraint(equalTo: self.bottomContainerView.trailingAnchor, constant: 0.0)
+                mainTableViewBottomConstraint = mainTableView.bottomAnchor.constraint(equalTo: self.bottomContainerView.bottomAnchor, constant: 0.0)
+                mainTableViewTopConstraint = mainTableView.topAnchor.constraint(equalTo: self.bottomContainerView.topAnchor, constant: (0.0))
+            }
+            else if UIDevice.current.orientation == UIDeviceOrientation.landscapeRight {
+                mainTableViewLeftConstraint = mainTableView.leadingAnchor.constraint(equalTo: self.bottomContainerView.leadingAnchor, constant: 0.0)
+                mainTableViewRightConstraint = mainTableView.trailingAnchor.constraint(equalTo: self.bottomContainerView.trailingAnchor, constant: -(topSafeArea + 24.0))
+                mainTableViewBottomConstraint = mainTableView.bottomAnchor.constraint(equalTo: self.bottomContainerView.bottomAnchor, constant: 0.0)
+                mainTableViewTopConstraint = mainTableView.topAnchor.constraint(equalTo: self.bottomContainerView.topAnchor, constant: (0.0))
+            }
+        }
+        else {
+            mainTableViewLeftConstraint = mainTableView.leadingAnchor.constraint(equalTo: self.bottomContainerView.leadingAnchor, constant: 0.0)
+            mainTableViewRightConstraint = mainTableView.trailingAnchor.constraint(equalTo: self.bottomContainerView.trailingAnchor, constant: 0.0)
+            mainTableViewBottomConstraint = mainTableView.bottomAnchor.constraint(equalTo: self.bottomContainerView.bottomAnchor, constant: 0.0)
+            mainTableViewTopConstraint = mainTableView.topAnchor.constraint(equalTo: self.bottomContainerView.topAnchor, constant: (0.0))
+        }
+        mainTableViewLeftConstraint.isActive = true
+        mainTableViewRightConstraint.isActive = true
+        mainTableViewTopConstraint.isActive = true
+        mainTableViewBottomConstraint.isActive = true
+        mainTableView.delegate = self
+        mainTableView.dataSource = self
+        mainTableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "Cell")
+        mainTableView.separatorInset = UIEdgeInsets.zero
+        mainTableView.allowsSelection = false
+        mainTableView.backgroundColor = nil
+        mainTableView.backgroundColor = UIColor.clear
+        mainTableView.separatorStyle = .none
+        mainTableView.contentInset = UIEdgeInsets(top: 20.0, left: 0.0, bottom: 20.0, right: 0.0)
+        
+        // Set up loader view
+        loaderView.hidesWhenStopped = true
+        loaderView.startAnimating()
+        loaderView.style = .whiteLarge
+        loaderView.color = UIColor.black.withAlphaComponent(0.75)
+        loaderView.translatesAutoresizingMaskIntoConstraints = false
+        self.bottomContainerView.addSubview(loaderView)
+        self.bottomContainerView.bringSubviewToFront(loaderView)
+        loaderViewXConstraint = loaderView.centerXAnchor.constraint(equalTo: bottomContainerView.centerXAnchor, constant: 0.0)
+        loaderViewYConstraint = loaderView.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor, constant: 0.0)
+        loaderViewXConstraint.isActive = true
+        loaderViewYConstraint.isActive = true
+        
     }
     
     // View did appear
     override func viewDidAppear(_ animated: Bool) {
+        self.loaderView.startAnimating()
         updateURL()
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.rotationEnabled = true
     }
     
     // View did layout subviews
@@ -495,11 +601,51 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
         if (UIDevice.current.orientation.isPortrait) {
             topContainerViewHeightConstraint.constant = topSafeArea + 208.0
             topContainerViewWidthConstraint.constant = viewWidth
+            bottomContainerViewLeftConstraint.constant = 0.0
+            bottomContainerViewRightConstraint.constant = 0.0
+            bottomContainerViewTopConstraint.constant = topSafeArea + 208.0
+            bottomContainerViewBottomConstraint.constant = 0.0
+            feedTypeContainerViewLeftConstraint.constant = 24.0
+            feedTypeContainerViewRightConstraint.constant = -24.0
+            titleLabelLeftConstraint.constant = 24.0
+            mediaTypeContainerViewLeftConstraint.constant = 24.0
+            mediaTypeContainerViewRightConstraint.constant = -24.0
+            mediaTypeContainerViewYConstraint.constant = -((topSafeArea / 2.0) - 37.0)
+            mainTableViewLeftConstraint.constant = 0.0
+            mainTableViewBottomConstraint.constant = 0.0
+            mainTableViewTopConstraint.constant = 0.0
+            mainTableViewRightConstraint.constant = 0.0
         }
         // On landscape orientation:
         else if (UIDevice.current.orientation.isLandscape) {
+            if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
+                topContainerViewWidthConstraint.constant = topSafeArea + 280.0
+                bottomContainerViewLeftConstraint.constant = topSafeArea + 280.0
+                feedTypeContainerViewLeftConstraint.constant = topSafeArea + 24.0
+                feedTypeContainerViewRightConstraint.constant = -24.0
+                titleLabelLeftConstraint.constant = topSafeArea + 24.0
+                mediaTypeContainerViewLeftConstraint.constant = topSafeArea + 24.0
+                mediaTypeContainerViewRightConstraint.constant = -24.0
+                mainTableViewRightConstraint.constant = 0.0
+            }
+            else if UIDevice.current.orientation == UIDeviceOrientation.landscapeRight {
+                topContainerViewWidthConstraint.constant = 280.0
+                bottomContainerViewLeftConstraint.constant = 280.0
+                feedTypeContainerViewLeftConstraint.constant = 24.0
+                feedTypeContainerViewRightConstraint.constant = -24.0
+                titleLabelLeftConstraint.constant = 24.0
+                mediaTypeContainerViewLeftConstraint.constant = 24.0
+                mediaTypeContainerViewRightConstraint.constant = -24.0
+                mainTableViewRightConstraint.constant = -(topSafeArea + 24.0)
+            }
             topContainerViewHeightConstraint.constant = viewWidth
-            topContainerViewWidthConstraint.constant = topSafeArea + 224.0
+            mediaTypeContainerViewYConstraint.constant = 0.0
+            bottomContainerViewRightConstraint.constant = bottomSafeArea
+            bottomContainerViewTopConstraint.constant = 0.0
+            bottomContainerViewBottomConstraint.constant = 0.0
+            mainTableViewLeftConstraint.constant = 0.0
+            mainTableViewBottomConstraint.constant = 0.0
+            mainTableViewTopConstraint.constant = 0.0
         }
         // Animate rotation change:
         UIView.animate(
@@ -508,6 +654,7 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
             options: .curveEaseInOut,
             animations: {
                 self.view.layoutIfNeeded()
+                self.view.updateConstraints()
         }, completion: nil)
     }
     
@@ -570,6 +717,14 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
                 self.popUpDarkenView.alpha = 0.0
                 self.popUpView.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
         }, completion: nil)
+        // Clear arrays first
+        self.nameLabels.removeAll()
+        self.artistNameLabels.removeAll()
+        self.artworkURLs.removeAll()
+        DispatchQueue.main.async {
+            self.mainTableView.reloadData()
+        }
+        self.loaderView.startAnimating()
         updateURL()
     }
     
@@ -635,6 +790,7 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
     
     // Update URL
     func updateURL() {
+        // Update media url
         if (mediaTypeLabel.text != nil && feedTypeLabel.text != nil) {
             tableViewDataSourceURLString = "https://rss.itunes.apple.com/api/v1/us/" + (mediaTypeLabel.text?.lowercased().replacingOccurrences(of: " ", with: "-"))! + "/" + (feedTypeLabel.text?.lowercased().replacingOccurrences(of: " ", with: "-"))! + "/all/10/explicit.json"
         }
@@ -642,6 +798,7 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
         URLSession.shared.dataTask(with: url, completionHandler: {(data, response, error) -> Void in
             if let feedDataDict = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? NSDictionary {
                 if let feedResults = (feedDataDict?.value(forKey: "feed") as? NSDictionary)?.value(forKey: "results") as? NSArray {
+                    self.resultDicts.removeAll()
                     for result in feedResults {
                         self.resultDicts.append(result as! NSDictionary)
                     }
@@ -658,6 +815,170 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
             self.artistNameLabels.append(data.value(forKey: "artistName") as! String)
             self.artworkURLs.append(data.value(forKey: "artworkUrl100") as! String)
         }
+        DispatchQueue.main.async {
+            self.loaderView.stopAnimating()
+            self.mainTableView.reloadData()
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.nameLabels.count
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 108.0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Define cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
+        
+        // Clear cell background coloe
+        cell.backgroundColor = UIColor.clear
+        
+        // Name label
+        cell.nameLabel.text = nameLabels[indexPath.row]
+        
+        // Artist name label
+        cell.artistNameLabel.text = artistNameLabels[indexPath.row]
+        
+        // Dowmload artwork url
+        let artworkURL = URL(string: artworkURLs[indexPath.row])!
+        let session = URLSession(configuration: .default)
+        _ = session.dataTask(with: artworkURL) { (data, response, error) in
+            if let e = error {
+                print(e)
+            }
+            else {
+                if (response as? HTTPURLResponse) != nil {
+                    if let imageData = data {
+                        DispatchQueue.main.async {
+                            cell.artworkImageView.image = UIImage(data: imageData)
+                        }
+                    }
+                    else {
+                        print("Error")
+                    }
+                }
+                else {
+                    print("Error")
+                }
+            }
+        }.resume()
+        
+        
+        return cell
+        
     }
   
+}
+
+// Custom Table View Cell
+class CustomTableViewCell: UITableViewCell {
+    
+    // Container View
+    var containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white
+        view.layer.cornerRadius = 15.0
+        view.clipsToBounds = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    var containerViewHeightConstraint = NSLayoutConstraint()
+    var containerViewYConstraint = NSLayoutConstraint()
+    var containerViewLeftConstraint = NSLayoutConstraint()
+    var containerViewRightConstraint = NSLayoutConstraint()
+    
+    // Artwork Image View
+    var artworkImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 12.0
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    var artworkImageViewWidthConstraint = NSLayoutConstraint()
+    var artworkImageViewHeightConstraint = NSLayoutConstraint()
+    var artworkImageViewLeftConstraint = NSLayoutConstraint()
+    var artworkImageViewYConstraint = NSLayoutConstraint()
+    
+    // Name Label
+    var nameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16.0, weight: .bold)
+        label.textColor = UIColor.black
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    var nameLabelLeftConstraint = NSLayoutConstraint()
+    var nameLabelRightConstraint = NSLayoutConstraint()
+    var nameLabelYConstraint = NSLayoutConstraint()
+    
+    // Artist Name Label
+    var artistNameLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+        label.textColor = UIColor.black.withAlphaComponent(0.6)
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    var artistNameLabelLeftConstraint = NSLayoutConstraint()
+    var artistNameLabelRightConstraint = NSLayoutConstraint()
+    var artistNameLabelYConstraint = NSLayoutConstraint()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        // Add container view
+        self.contentView.addSubview(containerView)
+        containerViewHeightConstraint = containerView.heightAnchor.constraint(equalToConstant: 100.0)
+        containerViewLeftConstraint = containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24.0)
+        containerViewRightConstraint = containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24.0)
+        containerViewYConstraint = containerView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: 0.0)
+        containerViewHeightConstraint.isActive = true
+        containerViewLeftConstraint.isActive = true
+        containerViewRightConstraint.isActive = true
+        containerViewYConstraint.isActive = true
+        
+        // Add subviews
+        self.containerView.addSubview(artworkImageView)
+        self.containerView.addSubview(nameLabel)
+        self.containerView.addSubview(artistNameLabel)
+        
+        // Artwork image constraints
+        artworkImageViewWidthConstraint = artworkImageView.widthAnchor.constraint(equalToConstant: 76.0)
+        artworkImageViewHeightConstraint = artworkImageView.heightAnchor.constraint(equalToConstant: 76.0)
+        artworkImageViewLeftConstraint = artworkImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12.0)
+        artworkImageViewYConstraint = artworkImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 0.0)
+        artworkImageViewWidthConstraint.isActive = true
+        artworkImageViewHeightConstraint.isActive = true
+        artworkImageViewLeftConstraint.isActive = true
+        artworkImageViewYConstraint.isActive = true
+        
+        // Name label constraints
+        nameLabelYConstraint = nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: -8.0)
+        nameLabelLeftConstraint = nameLabel.leadingAnchor.constraint(equalTo: artworkImageView.trailingAnchor, constant: 12.0)
+        nameLabelRightConstraint = nameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16.0)
+        nameLabelLeftConstraint.isActive = true
+        nameLabelRightConstraint.isActive = true
+        nameLabelYConstraint.isActive = true
+        
+        // Artist Name label constraints
+        artistNameLabelYConstraint = artistNameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 8.0)
+        artistNameLabelLeftConstraint = artistNameLabel.leadingAnchor.constraint(equalTo: artworkImageView.trailingAnchor, constant: 12.0)
+        artistNameLabelRightConstraint = artistNameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16.0)
+        artistNameLabelLeftConstraint.isActive = true
+        artistNameLabelRightConstraint.isActive = true
+        artistNameLabelYConstraint.isActive = true
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }
