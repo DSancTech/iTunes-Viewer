@@ -821,14 +821,17 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
         }
     }
     
+    // Table view number of rows
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.nameLabels.count
     }
     
+    // Table view cells height
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 108.0
     }
     
+    // Table view cells config
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // Define cell
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
@@ -855,17 +858,10 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
                         DispatchQueue.main.async {
                             cell.artworkImageView.image = UIImage(data: imageData)
                         }
-                    }
-                    else {
-                        print("Error")
-                    }
-                }
-                else {
-                    print("Error")
-                }
+                    } else { print("Error") }
+                } else { print("Error") }
             }
         }.resume()
-        
         
         return cell
         
