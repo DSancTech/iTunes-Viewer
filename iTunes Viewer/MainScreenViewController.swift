@@ -144,6 +144,10 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
     var selectedFeedTypeTextArray: [String] = ["Coming Soon", "Hot Tracks", "New Releases", "Top Albums", "Top Songs", "Hot Tracks", "New Music", "Recent Releases", "Top Albums", "Top Songs", "New Apps We Love", "New Games We Love", "Top Free", "Top Free iPad", "Top Grossing", "Top Grossing Paid", "Top Paid", "Top Free Mac Apps", "Top Grossing Mac Apps", "Top Mac Apps", "Top Paid Mac Apps", "Top Audiobooks", "Top Free", "Top Paid", "Top TV Episodes", "Top TV Seasons", "Top Movies", "Top iTunes U Courses", "Top Podcasts", "Top Music Videos"]
     var selectedFeedType = 0
     var selectedFeedInRow = 0
+    var resultDicts: [NSDictionary] = []
+    var nameLabels: [String] = []
+    var artistNameLabels: [String] = []
+    var artworkURLs: [String] = []
     
     // Table View Data Source URL String
     var tableViewDataSourceURLString: String = "https://rss.itunes.apple.com/api/v1/us/apple-music/coming-soon/all/10/explicit.json"
@@ -634,6 +638,26 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
         if (mediaTypeLabel.text != nil && feedTypeLabel.text != nil) {
             tableViewDataSourceURLString = "https://rss.itunes.apple.com/api/v1/us/" + (mediaTypeLabel.text?.lowercased().replacingOccurrences(of: " ", with: "-"))! + "/" + (feedTypeLabel.text?.lowercased().replacingOccurrences(of: " ", with: "-"))! + "/all/10/explicit.json"
         }
+        guard let url = URL(string: tableViewDataSourceURLString) else { return }
+        URLSession.shared.dataTask(with: url, completionHandler: {(data, response, error) -> Void in
+            if let feedDataDict = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? NSDictionary {
+                if let feedResults = (feedDataDict?.value(forKey: "feed") as? NSDictionary)?.value(forKey: "results") as? NSArray {
+                    for result in feedResults {
+                        self.resultDicts.append(result as! NSDictionary)
+                    }
+                    self.updateArrays();
+                }
+            }
+        }).resume()
     }
- 
+    
+    // Update Arrays
+    func updateArrays() {
+        for data in self.resultDicts {
+            self.nameLabels.append(data.value(forKey: "name") as! String)
+            self.artistNameLabels.append(data.value(forKey: "artistName") as! String)
+            self.artworkURLs.append(data.value(forKey: "artworkUrl100") as! String)
+        }
+    }
+  
 }
