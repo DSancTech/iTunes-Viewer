@@ -108,6 +108,12 @@ class MainScreenViewController: UIViewController {
     var viewHeight = CGFloat()
     var viewWidth = CGFloat()
     
+    // Arrays
+    var selectedMediaTypeArray: [Int] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    var selectedMediaTypeTextArray: [String] = ["Apple Music", "iTunes Music", "iOS Apps", "Mac Apps", "Audiobooks", "Books", "TV Shows", "Movies", "iTunes U", "Podcasts", "Music Videos"]
+    var selectedFeedTypeArray: [[Int]] = [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16], [17, 18, 19, 20], [21], [22, 23], [24, 25], [26], [27], [28], [29]]
+    var selectedFeedTypeTextArray: [String] = ["Coming Soon", "Hot Tracks", "New Releases", "Top Albums", "Top Songs", "Hot Tracks", "New Music", "Recent Releases", "Top Albums", "Top Songs", "New Apps We Love", "New Games We Love", "Top Free", "Top Free iPad", "Top Grossing", "Top Grossing Paid", "Top Paid", "Top Free Mac Apps", "Top Grossing Mac Apps", "Top Mac Apps", "Top Paid Mac Apps", "Top Audiobooks", "Top Free", "Top Paid", "Top TV Episodes", "Top TV Seasons", "Top Movies", "Top iTunes U Courses", "Top Podcasts", "Top Music Videos",]
+    
     // View Did Load
     override func viewDidLoad() {
         super.viewDidLoad()
