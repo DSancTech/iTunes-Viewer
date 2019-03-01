@@ -580,8 +580,6 @@ class MainScreenViewController: UIViewController, UIPickerViewDelegate, UIPicker
     override func viewDidAppear(_ animated: Bool) {
         self.loaderView.startAnimating()
         updateURL()
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.rotationEnabled = true
     }
     
     // View did layout subviews
